@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.ExperimentalMaterial3Api
 import com.spotitworld.R
 
 enum class Difficulty {
@@ -32,6 +33,7 @@ enum class Difficulty {
 // Square numbers: 4, 9, 16, 25, 32
 val VALID_ITEM_COUNTS = listOf(4, 9, 16, 25, 32)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetupScreen(
     onBeginHunt: (location: String, difficulty: Difficulty, itemCount: Int) -> Unit,
