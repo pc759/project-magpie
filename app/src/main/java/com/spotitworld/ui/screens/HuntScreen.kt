@@ -6,14 +6,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -25,17 +26,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.grayscale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
-import com.spotitworld.R
 import com.spotitworld.data.HuntItem
 
 @Composable
@@ -43,77 +40,97 @@ fun HuntScreen(
     location: String,
     difficulty: Difficulty,
     itemCount: Int,
-    items: List<HuntItem>,
-    onItemFound: (itemId: String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedItem by remember { mutableStateOf<HuntItem?>(null) }
-    var updatedItems by remember { mutableStateOf(items) }
+    // Mock hunt items
+    val mockItems = (1..itemCount).map { index ->
+        HuntItem(
+            id = index,
+            name = "Item $index",
+            imageUrl = "https://via.placeholder.com/200?text=Item+$index",
+            funFact = "This is a fun fact about item $index!",
+            isFound = false
+        )
+    }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+    var huntItems by remember { mutableStateOf(mockItems) }
+    var selectedItem by remember { mutableStateOf<HuntItem?>(null) }
+    var showGrayscale by remember { mutableStateOf(true) }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Header
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column {
                 Text(
-                    text = location,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    text = "Hunt in $location",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${updatedItems.count { it.isFound }}/${itemCount} Found",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "Difficulty: $difficulty",
+                    fontSize = 12.sp,
+                    color = Color.Gray
                 )
             }
-
-            // Grid of Items
-            val gridSize = kotlin.math.sqrt(itemCount.toDouble()).toInt()
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(gridSize),
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(updatedItems) { item ->
-                    HuntItemCard(
-                        item = item,
-                        onClick = { selectedItem = item }
-                    )
-                }
+            Button(onClick = { showGrayscale = !showGrayscale }) {
+                Text(if (showGrayscale) "Show Color" else "Show B&W")
             }
         }
 
-        // Back Button (Bottom)
+        // Item Grid
+        val gridSize = kotlin.math.sqrt(itemCount.toDouble()).toInt()
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(gridSize),
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(huntItems) { item ->
+                HuntItemCard(
+                    item = item,
+                    isGrayscale = showGrayscale && !item.isFound,
+                    onClick = { selectedItem = item },
+                    onMarkFound = {
+                        huntItems = huntItems.map {
+                            if (it.id == item.id) it.copy(isFound = true) else it
+                        }
+                    }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Back Button
         Button(
             onClick = onBack,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Back")
+            Text("Back to Menu")
         }
     }
 
-    // Modal for Item Details
-    if (selectedItem != null) {
-        ItemDetailModal(
-            item = selectedItem!!,
-            onFound = {
-                updatedItems = updatedItems.map {
-                    if (it.id == selectedItem!!.id) it.copy(isFound = true) else it
+    // Detail Modal
+    selectedItem?.let { item ->
+        HuntItemDetailModal(
+            item = item,
+            onDismiss = { selectedItem = null },
+            onMarkFound = {
+                huntItems = huntItems.map {
+                    if (it.id == item.id) it.copy(isFound = true) else it
                 }
-                onItemFound(selectedItem!!.id)
                 selectedItem = null
-            },
-            onClose = { selectedItem = null }
+            }
         )
     }
 }
@@ -121,42 +138,42 @@ fun HuntScreen(
 @Composable
 fun HuntItemCard(
     item: HuntItem,
+    isGrayscale: Boolean,
     onClick: () -> Unit,
+    onMarkFound: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(enabled = !item.isFound) { onClick() },
-        shape = RoundedCornerShape(8.dp)
+            .aspectRatio(1f)
+            .clickable(onClick = onClick)
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .fillMaxSize()
+                .background(Color.LightGray)
+                .grayscale(if (isGrayscale) 1f else 0f),
+            contentAlignment = Alignment.Center
         ) {
             AsyncImage(
                 model = item.imageUrl,
                 contentDescription = item.name,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                colorFilter = if (item.isFound) null else ColorFilter.tint(Color.Gray, blendMode = androidx.compose.ui.graphics.BlendMode.Darken)
+                contentScale = ContentScale.Crop
             )
 
-            // "Found" Overlay
             if (item.isFound) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.3f)),
+                        .background(Color.Green.copy(alpha = 0.5f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "✓",
-                        fontSize = 48.sp,
+                        text = "✓ Found",
                         color = Color.White,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
                     )
                 }
             }
@@ -165,79 +182,65 @@ fun HuntItemCard(
 }
 
 @Composable
-fun ItemDetailModal(
+fun HuntItemDetailModal(
     item: HuntItem,
-    onFound: () -> Unit,
-    onClose: () -> Unit,
+    onDismiss: () -> Unit,
+    onMarkFound: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Dialog(
-        onDismissRequest = onClose,
+    Box(
         modifier = modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f))
+            .clickable(onClick = onDismiss),
+        contentAlignment = Alignment.Center
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp)
+                .fillMaxWidth(0.8f)
+                .clickable(enabled = false, onClick = {})
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Large Image
+                Text(
+                    text = item.name,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
                 AsyncImage(
                     model = item.imageUrl,
                     contentDescription = item.name,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .size(200.dp)
-                        .clip(RoundedCornerShape(8.dp)),
+                        .height(200.dp),
                     contentScale = ContentScale.Crop
                 )
 
-                // Item Name
                 Text(
-                    text = item.name,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    text = item.funFact,
+                    fontSize = 14.sp
                 )
 
-                // Fun Fact
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = stringResource(R.string.fun_fact),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = item.funFact,
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                // Action Buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Button(
-                        onClick = onClose,
+                        onClick = onDismiss,
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(stringResource(R.string.close))
+                        Text("Close")
                     }
-                    Button(
-                        onClick = onFound,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(stringResource(R.string.found))
+                    if (!item.isFound) {
+                        Button(
+                            onClick = onMarkFound,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Mark Found")
+                        }
                     }
                 }
             }
