@@ -1,7 +1,7 @@
 package com.spotitworld.data
 
 data class HuntItem(
-    val id: String,
+    val id: Int,
     val name: String,
     val imageUrl: String,
     val funFact: String,
