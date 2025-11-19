@@ -1,5 +1,7 @@
 package com.magpie.ui.screens
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -59,23 +62,30 @@ fun HuntScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Header with hunt info
+        Column {
+            Text(
+                text = hunt.id,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = hunt.name,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "${hunt.location} • ${difficulty.name}",
+                fontSize = 12.sp,
+                color = Color.Gray
+            )
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.End
         ) {
-            Column {
-                Text(
-                    text = "Hunt in ${hunt.location}",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Difficulty: ${difficulty.name}",
-                    fontSize = 12.sp,
-                    color = Color.Gray
-                )
-            }
             Button(onClick = { showGrayscale = !showGrayscale }) {
                 Text(if (showGrayscale) "Show Color" else "Show B&W")
             }
@@ -93,10 +103,7 @@ fun HuntScreen(
                     item = item,
                     isFound = item.id in selectedItems,
                     isGrayscale = showGrayscale && item.id !in selectedItems,
-                    onClick = { selectedItem = item },
-                    onMarkFound = {
-                        selectedItems = selectedItems + item.id
-                    }
+                    onClick = { selectedItem = item }
                 )
             }
         }
@@ -130,7 +137,6 @@ fun HuntItemCard(
     isFound: Boolean,
     isGrayscale: Boolean,
     onClick: () -> Unit,
-    onMarkFound: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -179,6 +185,12 @@ fun HuntItemDetailModal(
     onMarkFound: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showFact by remember { mutableStateOf(false) }
+    val factAlpha by animateFloatAsState(
+        targetValue = if (showFact) 1f else 0f,
+        animationSpec = tween(durationMillis = 600)
+    )
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -188,7 +200,7 @@ fun HuntItemDetailModal(
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth(0.85f)
                 .clickable(enabled = false, onClick = {})
         ) {
             Column(
@@ -210,10 +222,21 @@ fun HuntItemDetailModal(
                     contentScale = ContentScale.Crop
                 )
 
-                Text(
-                    text = item.funFact,
-                    fontSize = 14.sp
-                )
+                // Fun fact only shown when found
+                if (isFound || showFact) {
+                    Text(
+                        text = item.funFact,
+                        fontSize = 14.sp,
+                        modifier = Modifier.alpha(factAlpha)
+                    )
+                } else {
+                    Text(
+                        text = "Mark as found to reveal the fun fact!",
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -227,7 +250,10 @@ fun HuntItemDetailModal(
                     }
                     if (!isFound) {
                         Button(
-                            onClick = onMarkFound,
+                            onClick = {
+                                onMarkFound()
+                                showFact = true
+                            },
                             modifier = Modifier.weight(1f)
                         ) {
                             Text("Mark Found")

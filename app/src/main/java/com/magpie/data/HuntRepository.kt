@@ -6,6 +6,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 data class Hunt(
+    val id: String,
     val name: String,
     val location: String,
     val difficulty: Difficulty,
@@ -28,6 +29,7 @@ class HuntRepository(private val context: Context) {
     }
 
     private fun parseHunt(jsonObject: JSONObject): Hunt {
+        val id = jsonObject.getString("id")
         val name = jsonObject.getString("name")
         val location = jsonObject.getString("location")
         val difficulty = Difficulty.valueOf(jsonObject.getString("difficulty"))
@@ -48,6 +50,7 @@ class HuntRepository(private val context: Context) {
         }
 
         return Hunt(
+            id = id,
             name = name,
             location = location,
             difficulty = difficulty,

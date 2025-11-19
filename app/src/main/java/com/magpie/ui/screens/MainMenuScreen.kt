@@ -34,7 +34,7 @@ fun MainMenuScreen(
             color = MaterialTheme.colorScheme.primary
         )
         Text(
-            text = "AI-Powered Scavenger Hunt",
+            text = "Scavenger Hunt Adventure",
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
             modifier = Modifier.padding(top = 8.dp)
