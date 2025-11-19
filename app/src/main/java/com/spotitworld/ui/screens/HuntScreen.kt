@@ -26,7 +26,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.grayscale
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -77,7 +78,7 @@ fun HuntScreen(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Difficulty: $difficulty",
+                    text = "Difficulty: ${difficulty.name}",
                     fontSize = 12.sp,
                     color = Color.Gray
                 )
@@ -152,7 +153,20 @@ fun HuntItemCard(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.LightGray)
-                .grayscale(if (isGrayscale) 1f else 0f),
+                .then(
+                    if (isGrayscale) {
+                        Modifier.drawWithContent {
+                            drawWithContent {
+                                drawRect(
+                                    color = Color.Black.copy(alpha = 0.3f),
+                                    blendMode = BlendMode.Saturation
+                                )
+                            }
+                        }
+                    } else {
+                        Modifier
+                    }
+                ),
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
