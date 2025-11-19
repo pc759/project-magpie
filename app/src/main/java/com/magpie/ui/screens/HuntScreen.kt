@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,7 +61,6 @@ fun HuntScreen(
 
     var selectedItems by remember { mutableStateOf(setOf<Int>()) }
     var selectedItem by remember { mutableStateOf<HuntItem?>(null) }
-    var showGrayscale by remember { mutableStateOf(true) }
     
     val isComplete = selectedItems.size == huntItems.size
 
@@ -70,40 +70,18 @@ fun HuntScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header with hunt info
+        // Header with location
         Column {
             Text(
-                text = hunt.id,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold
-            )
-            Text(
-                text = hunt.name,
+                text = hunt.location,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "${hunt.location} • ${difficulty.name}",
+                text = hunt.name,
                 fontSize = 12.sp,
                 color = Color.Gray
             )
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "${selectedItems.size}/${huntItems.size} found",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Button(onClick = { showGrayscale = !showGrayscale }) {
-                Text(if (showGrayscale) "Show Color" else "Show B&W")
-            }
         }
 
         val gridSize = kotlin.math.sqrt(itemCount.toDouble()).toInt()
@@ -117,7 +95,6 @@ fun HuntScreen(
                 HuntItemCard(
                     item = item,
                     isFound = item.id in selectedItems,
-                    isGrayscale = showGrayscale && item.id !in selectedItems,
                     onClick = { selectedItem = item }
                 )
             }
@@ -125,11 +102,24 @@ fun HuntScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Button(
-            onClick = onBack,
-            modifier = Modifier.fillMaxWidth()
+        // Footer with key
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Back to Menu")
+            Text(
+                text = "${hunt.id} • ${difficulty.name} • ${selectedItems.size}/${huntItems.size} found",
+                fontSize = 11.sp,
+                color = Color.Gray,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+            Button(
+                onClick = onBack,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Back to Menu")
+            }
         }
     }
 
@@ -203,7 +193,6 @@ fun HuntScreen(
 fun HuntItemCard(
     item: HuntItem,
     isFound: Boolean,
-    isGrayscale: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -211,6 +200,7 @@ fun HuntItemCard(
         modifier = modifier
             .aspectRatio(1f)
             .clickable(onClick = onClick)
+            .border(1.dp, Color.Gray.copy(alpha = 0.3f))
     ) {
         Box(
             modifier = Modifier
@@ -223,21 +213,22 @@ fun HuntItemCard(
                 contentDescription = item.name,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
-                alpha = if (isGrayscale) 0.5f else 1f
+                alpha = if (isFound) 1f else 0.5f
             )
 
             if (isFound) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Green.copy(alpha = 0.5f)),
+                        .background(Color.Transparent),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "✓ Found",
-                        color = Color.White,
+                        text = "✓",
+                        color = Color.Green,
+                        fontSize = 60.sp,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        modifier = Modifier.alpha(0.8f)
                     )
                 }
             }
