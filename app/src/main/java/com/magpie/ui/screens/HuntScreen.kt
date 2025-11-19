@@ -1,7 +1,11 @@
 package com.magpie.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -56,6 +61,8 @@ fun HuntScreen(
     var selectedItems by remember { mutableStateOf(setOf<Int>()) }
     var selectedItem by remember { mutableStateOf<HuntItem?>(null) }
     var showGrayscale by remember { mutableStateOf(true) }
+    
+    val isComplete = selectedItems.size == huntItems.size
 
     Column(
         modifier = modifier
@@ -85,8 +92,15 @@ fun HuntScreen(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            Text(
+                text = "${selectedItems.size}/${huntItems.size} found",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary
+            )
             Button(onClick = { showGrayscale = !showGrayscale }) {
                 Text(if (showGrayscale) "Show Color" else "Show B&W")
             }
@@ -116,6 +130,60 @@ fun HuntScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Back to Menu")
+        }
+    }
+
+    // Completion banner
+    AnimatedVisibility(
+        visible = isComplete,
+        enter = scaleIn(animationSpec = tween(500)) + fadeIn(animationSpec = tween(500)),
+        exit = fadeOut(animationSpec = tween(300))
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.6f))
+                .clickable(enabled = false, onClick = {}),
+            contentAlignment = Alignment.Center
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .padding(24.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(32.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = "🎉",
+                        fontSize = 64.sp
+                    )
+                    Text(
+                        text = "Hunt Complete!",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "You found all $itemCount items in ${hunt.name}",
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center
+                    )
+                    Button(
+                        onClick = onBack,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    ) {
+                        Text("Return to Menu")
+                    }
+                }
+            }
         }
     }
 
@@ -254,7 +322,7 @@ fun HuntItemDetailModal(
                                 fontSize = 14.sp,
                                 color = Color.White,
                                 modifier = Modifier.padding(12.dp),
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                textAlign = TextAlign.Center
                             )
                         }
                     }
