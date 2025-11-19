@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.spotitworld"
+    namespace = "com.magpie"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.spotitworld"
+        applicationId = "com.magpie"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
