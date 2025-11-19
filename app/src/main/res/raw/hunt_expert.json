@@ -1,0 +1,103 @@
+{
+  "name": "Central Park Master Challenge",
+  "location": "Central Park, NYC",
+  "difficulty": "EXPERT",
+  "items": [
+    {
+      "id": 1,
+      "name": "Alice in Wonderland Statue",
+      "imageUrl": "https://images.unsplash.com/photo-1578301978162-7aae4d755744?w=400&h=400&fit=crop",
+      "funFact": "The Alice in Wonderland statue has been rubbed so much by visitors that parts of it shine brightly."
+    },
+    {
+      "id": 2,
+      "name": "Cleopatra's Needle",
+      "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+      "funFact": "Cleopatra's Needle is a 3,500-year-old Egyptian obelisk gifted to New York in 1881."
+    },
+    {
+      "id": 3,
+      "name": "The Dakota Building View",
+      "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=400&fit=crop",
+      "funFact": "The Dakota Building, visible from the park, is where John Lennon lived and was tragically shot in 1980."
+    },
+    {
+      "id": 4,
+      "name": "Bethesda Terrace Arcade",
+      "imageUrl": "https://images.unsplash.com/photo-1469022563149-aa64dbd37dae?w=400&h=400&fit=crop",
+      "funFact": "The Bethesda Terrace Arcade features intricate Minton tile work and was restored in 2007."
+    },
+    {
+      "id": 5,
+      "name": "Loeb Boathouse",
+      "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=400&fit=crop",
+      "funFact": "Loeb Boathouse is the only restaurant in Central Park and offers gondola rides on the lake."
+    },
+    {
+      "id": 6,
+      "name": "Ramble Bridge",
+      "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+      "funFact": "The Ramble is a 38-acre wooded area with over 50 bridges and is a haven for birdwatchers."
+    },
+    {
+      "id": 7,
+      "name": "Delacorte Theater",
+      "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=400&fit=crop",
+      "funFact": "Delacorte Theater hosts Shakespeare in the Park, a free summer theater festival since 1962."
+    },
+    {
+      "id": 8,
+      "name": "Bethesda Lake",
+      "imageUrl": "https://images.unsplash.com/photo-1444464666175-1642a9f33e12?w=400&h=400&fit=crop",
+      "funFact": "Bethesda Lake is the second-largest body of water in Central Park and is home to various fish species."
+    },
+    {
+      "id": 9,
+      "name": "Bow Bridge Arch",
+      "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+      "funFact": "Bow Bridge's cast-iron arch is a marvel of 19th-century engineering and spans 87 feet."
+    },
+    {
+      "id": 10,
+      "name": "The Obelisk",
+      "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+      "funFact": "The Obelisk, also called Cleopatra's Needle, is one of only two Egyptian obelisks in the Western Hemisphere."
+    },
+    {
+      "id": 11,
+      "name": "Greystone Bridge",
+      "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+      "funFact": "Greystone Bridge is made of Manhattan schist and granite, the same rock that forms the park's foundation."
+    },
+    {
+      "id": 12,
+      "name": "Mineral Springs",
+      "imageUrl": "https://images.unsplash.com/photo-1444464666175-1642a9f33e12?w=400&h=400&fit=crop",
+      "funFact": "Mineral Springs was a popular gathering spot in the 19th century for its natural spring water."
+    },
+    {
+      "id": 13,
+      "name": "Azalea Pond",
+      "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=400&fit=crop",
+      "funFact": "Azalea Pond is surrounded by beautiful flowering plants and is a peaceful retreat in the park."
+    },
+    {
+      "id": 14,
+      "name": "Pilgrim Hill",
+      "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=400&fit=crop",
+      "funFact": "Pilgrim Hill offers one of the best views of the park and is named after the Pilgrims' journey."
+    },
+    {
+      "id": 15,
+      "name": "Cedar Hill",
+      "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=400&fit=crop",
+      "funFact": "Cedar Hill is home to a variety of cedar trees and offers scenic views of the park."
+    },
+    {
+      "id": 16,
+      "name": "The Reservoir",
+      "imageUrl": "https://images.unsplash.com/photo-1444464666175-1642a9f33e12?w=400&h=400&fit=crop",
+      "funFact": "The Reservoir is a 106-acre body of water that was once used as a water supply for the city."
+    }
+  ]
+}

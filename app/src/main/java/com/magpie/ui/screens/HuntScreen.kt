@@ -28,11 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.magpie.data.HuntItem
+import com.magpie.data.HuntRepository
 
 @Composable
 fun HuntScreen(
@@ -42,17 +44,12 @@ fun HuntScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val mockItems = (1..itemCount).map { index ->
-        HuntItem(
-            id = index,
-            name = "Item $index",
-            imageUrl = "https://via.placeholder.com/200?text=Item+$index",
-            funFact = "This is a fun fact about item $index!",
-            isFound = false
-        )
-    }
+    val context = LocalContext.current
+    val repository = remember { HuntRepository(context) }
+    val hunt = remember { repository.getHuntByDifficulty(difficulty) }
+    val huntItems = hunt.items.take(itemCount)
 
-    var huntItems by remember { mutableStateOf(mockItems) }
+    var selectedItems by remember { mutableStateOf(setOf<Int>()) }
     var selectedItem by remember { mutableStateOf<HuntItem?>(null) }
     var showGrayscale by remember { mutableStateOf(true) }
 
@@ -69,7 +66,7 @@ fun HuntScreen(
         ) {
             Column {
                 Text(
-                    text = "Hunt in $location",
+                    text = "Hunt in ${hunt.location}",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -94,12 +91,11 @@ fun HuntScreen(
             items(huntItems) { item ->
                 HuntItemCard(
                     item = item,
-                    isGrayscale = showGrayscale && !item.isFound,
+                    isFound = item.id in selectedItems,
+                    isGrayscale = showGrayscale && item.id !in selectedItems,
                     onClick = { selectedItem = item },
                     onMarkFound = {
-                        huntItems = huntItems.map {
-                            if (it.id == item.id) it.copy(isFound = true) else it
-                        }
+                        selectedItems = selectedItems + item.id
                     }
                 )
             }
@@ -118,11 +114,10 @@ fun HuntScreen(
     selectedItem?.let { item ->
         HuntItemDetailModal(
             item = item,
+            isFound = item.id in selectedItems,
             onDismiss = { selectedItem = null },
             onMarkFound = {
-                huntItems = huntItems.map {
-                    if (it.id == item.id) it.copy(isFound = true) else it
-                }
+                selectedItems = selectedItems + item.id
                 selectedItem = null
             }
         )
@@ -132,6 +127,7 @@ fun HuntScreen(
 @Composable
 fun HuntItemCard(
     item: HuntItem,
+    isFound: Boolean,
     isGrayscale: Boolean,
     onClick: () -> Unit,
     onMarkFound: () -> Unit,
@@ -156,7 +152,7 @@ fun HuntItemCard(
                 alpha = if (isGrayscale) 0.5f else 1f
             )
 
-            if (item.isFound) {
+            if (isFound) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -178,6 +174,7 @@ fun HuntItemCard(
 @Composable
 fun HuntItemDetailModal(
     item: HuntItem,
+    isFound: Boolean,
     onDismiss: () -> Unit,
     onMarkFound: () -> Unit,
     modifier: Modifier = Modifier
@@ -228,7 +225,7 @@ fun HuntItemDetailModal(
                     ) {
                         Text("Close")
                     }
-                    if (!item.isFound) {
+                    if (!isFound) {
                         Button(
                             onClick = onMarkFound,
                             modifier = Modifier.weight(1f)

@@ -1,0 +1,61 @@
+{
+  "name": "Central Park Explorer",
+  "location": "Central Park, NYC",
+  "difficulty": "EXPLORER",
+  "items": [
+    {
+      "id": 1,
+      "name": "Bethesda Terrace",
+      "imageUrl": "https://images.unsplash.com/photo-1469022563149-aa64dbd37dae?w=400&h=400&fit=crop",
+      "funFact": "Bethesda Terrace is the only underground section of Central Park and features stunning architecture."
+    },
+    {
+      "id": 2,
+      "name": "Bow Bridge",
+      "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+      "funFact": "Bow Bridge is one of the most photographed bridges in Central Park and was built in 1862."
+    },
+    {
+      "id": 3,
+      "name": "Sheep Meadow",
+      "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=400&fit=crop",
+      "funFact": "Sheep Meadow was historically used to graze sheep, giving it its unique name and open landscape."
+    },
+    {
+      "id": 4,
+      "name": "Strawberry Fields",
+      "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=400&fit=crop",
+      "funFact": "Strawberry Fields is a memorial garden dedicated to John Lennon of The Beatles."
+    },
+    {
+      "id": 5,
+      "name": "Balto Statue",
+      "imageUrl": "https://images.unsplash.com/photo-1578301978162-7aae4d755744?w=400&h=400&fit=crop",
+      "funFact": "The Balto statue commemorates the sled dog who helped deliver medicine during the 1925 serum run."
+    },
+    {
+      "id": 6,
+      "name": "Bethesda Fountain",
+      "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=400&fit=crop",
+      "funFact": "Bethesda Fountain is the only fountain in Central Park with a statue at its top."
+    },
+    {
+      "id": 7,
+      "name": "Conservatory Garden",
+      "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=400&fit=crop",
+      "funFact": "The Conservatory Garden is the only formal garden in Central Park with three distinct sections."
+    },
+    {
+      "id": 8,
+      "name": "Turtle Pond",
+      "imageUrl": "https://images.unsplash.com/photo-1444464666175-1642a9f33e12?w=400&h=400&fit=crop",
+      "funFact": "Turtle Pond is home to red-eared slider turtles and various fish species."
+    },
+    {
+      "id": 9,
+      "name": "Belvedere Castle",
+      "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+      "funFact": "Belvedere Castle offers panoramic views of Central Park and was built in 1869."
+    }
+  ]
+}
