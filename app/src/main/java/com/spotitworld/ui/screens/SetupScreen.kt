@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilterChip
+import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -83,19 +83,19 @@ fun SetupScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                FilterChip(
+                ElevatedFilterChip(
                     selected = selectedDifficulty == Difficulty.TODDLER,
                     onClick = { selectedDifficulty = Difficulty.TODDLER },
                     label = { Text(stringResource(R.string.difficulty_toddler)) },
                     modifier = Modifier.weight(1f)
                 )
-                FilterChip(
+                ElevatedFilterChip(
                     selected = selectedDifficulty == Difficulty.EXPLORER,
                     onClick = { selectedDifficulty = Difficulty.EXPLORER },
                     label = { Text(stringResource(R.string.difficulty_explorer)) },
                     modifier = Modifier.weight(1f)
                 )
-                FilterChip(
+                ElevatedFilterChip(
                     selected = selectedDifficulty == Difficulty.EXPERT,
                     onClick = { selectedDifficulty = Difficulty.EXPERT },
                     label = { Text(stringResource(R.string.difficulty_expert)) },
@@ -117,7 +117,7 @@ fun SetupScreen(
             ) {
                 VALID_ITEM_COUNTS.forEach { count ->
                     val gridSize = kotlin.math.sqrt(count.toDouble()).toInt()
-                    FilterChip(
+                    ElevatedFilterChip(
                         selected = selectedItemCount == count,
                         onClick = { selectedItemCount = count },
                         label = { Text("$gridSize×$gridSize") },
