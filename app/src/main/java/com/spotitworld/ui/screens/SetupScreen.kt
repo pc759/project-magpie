@@ -86,20 +86,17 @@ fun SetupScreen(
                 ElevatedFilterChip(
                     selected = selectedDifficulty == Difficulty.TODDLER,
                     onClick = { selectedDifficulty = Difficulty.TODDLER },
-                    label = { Text(stringResource(R.string.difficulty_toddler)) },
-                    modifier = Modifier.weight(1f)
+                    label = { Text(stringResource(R.string.difficulty_toddler)) }
                 )
                 ElevatedFilterChip(
                     selected = selectedDifficulty == Difficulty.EXPLORER,
                     onClick = { selectedDifficulty = Difficulty.EXPLORER },
-                    label = { Text(stringResource(R.string.difficulty_explorer)) },
-                    modifier = Modifier.weight(1f)
+                    label = { Text(stringResource(R.string.difficulty_explorer)) }
                 )
                 ElevatedFilterChip(
                     selected = selectedDifficulty == Difficulty.EXPERT,
                     onClick = { selectedDifficulty = Difficulty.EXPERT },
-                    label = { Text(stringResource(R.string.difficulty_expert)) },
-                    modifier = Modifier.weight(1f)
+                    label = { Text(stringResource(R.string.difficulty_expert)) }
                 )
             }
         }
@@ -120,8 +117,7 @@ fun SetupScreen(
                     ElevatedFilterChip(
                         selected = selectedItemCount == count,
                         onClick = { selectedItemCount = count },
-                        label = { Text("$gridSize×$gridSize") },
-                        modifier = Modifier.weight(1f)
+                        label = { Text("$gridSize×$gridSize") }
                     )
                 }
             }
