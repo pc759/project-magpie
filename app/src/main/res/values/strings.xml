@@ -5,4 +5,12 @@
     <string name="join_shared_hunt">Join Shared Hunt</string>
     <string name="options">Options</string>
     <string name="coming_soon">Coming Soon</string>
+    <string name="setup_hunt">Setup Hunt</string>
+    <string name="location">Location</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="item_count">Number of Items</string>
+    <string name="difficulty_toddler">Toddler</string>
+    <string name="difficulty_explorer">Explorer</string>
+    <string name="difficulty_expert">Expert</string>
+    <string name="begin_hunt">Begin Hunt</string>
 </resources>
