@@ -13,4 +13,7 @@
     <string name="difficulty_explorer">Explorer</string>
     <string name="difficulty_expert">Expert</string>
     <string name="begin_hunt">Begin Hunt</string>
+    <string name="found">Found</string>
+    <string name="close">Close</string>
+    <string name="fun_fact">Fun Fact</string>
 </resources>
