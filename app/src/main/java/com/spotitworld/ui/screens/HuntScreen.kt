@@ -42,7 +42,6 @@ fun HuntScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Mock hunt items
     val mockItems = (1..itemCount).map { index ->
         HuntItem(
             id = index,
@@ -63,7 +62,6 @@ fun HuntScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -86,7 +84,6 @@ fun HuntScreen(
             }
         }
 
-        // Item Grid
         val gridSize = kotlin.math.sqrt(itemCount.toDouble()).toInt()
         LazyVerticalGrid(
             columns = GridCells.Fixed(gridSize),
@@ -110,7 +107,6 @@ fun HuntScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Back Button
         Button(
             onClick = onBack,
             modifier = Modifier.fillMaxWidth()
@@ -119,7 +115,6 @@ fun HuntScreen(
         }
     }
 
-    // Detail Modal
     selectedItem?.let { item ->
         HuntItemDetailModal(
             item = item,
