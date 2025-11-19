@@ -26,8 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -152,28 +150,15 @@ fun HuntItemCard(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.LightGray)
-                .then(
-                    if (isGrayscale) {
-                        Modifier.drawWithContent {
-                            drawWithContent {
-                                drawRect(
-                                    color = Color.Black.copy(alpha = 0.3f),
-                                    blendMode = BlendMode.Saturation
-                                )
-                            }
-                        }
-                    } else {
-                        Modifier
-                    }
-                ),
+                .background(Color.LightGray),
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
                 model = item.imageUrl,
                 contentDescription = item.name,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                alpha = if (isGrayscale) 0.5f else 1f
             )
 
             if (item.isFound) {
