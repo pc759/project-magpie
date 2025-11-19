@@ -22,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -125,7 +126,6 @@ fun HuntScreen(
             onDismiss = { selectedItem = null },
             onMarkFound = {
                 selectedItems = selectedItems + item.id
-                selectedItem = null
             }
         )
     }
@@ -185,10 +185,23 @@ fun HuntItemDetailModal(
     onMarkFound: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showFact by remember { mutableStateOf(false) }
-    val factAlpha by animateFloatAsState(
-        targetValue = if (showFact) 1f else 0f,
+    var revealFact by remember { mutableStateOf(isFound) }
+    
+    // Auto-reveal fact when item becomes found
+    LaunchedEffect(isFound) {
+        if (isFound && !revealFact) {
+            revealFact = true
+        }
+    }
+
+    val imageAlpha by animateFloatAsState(
+        targetValue = if (revealFact) 0.3f else 1f,
         animationSpec = tween(durationMillis = 600)
+    )
+    
+    val factAlpha by animateFloatAsState(
+        targetValue = if (revealFact) 1f else 0f,
+        animationSpec = tween(durationMillis = 600, delayMillis = 300)
     )
 
     Box(
@@ -213,23 +226,42 @@ fun HuntItemDetailModal(
                     fontWeight = FontWeight.Bold
                 )
 
-                AsyncImage(
-                    model = item.imageUrl,
-                    contentDescription = item.name,
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
-                    contentScale = ContentScale.Crop
-                )
-
-                // Fun fact only shown when found
-                if (isFound || showFact) {
-                    Text(
-                        text = item.funFact,
-                        fontSize = 14.sp,
-                        modifier = Modifier.alpha(factAlpha)
+                        .height(200.dp)
+                ) {
+                    AsyncImage(
+                        model = item.imageUrl,
+                        contentDescription = item.name,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .alpha(imageAlpha),
+                        contentScale = ContentScale.Crop
                     )
-                } else {
+                    
+                    // Fact overlay
+                    if (revealFact) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.6f))
+                                .alpha(factAlpha),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = item.funFact,
+                                fontSize = 14.sp,
+                                color = Color.White,
+                                modifier = Modifier.padding(12.dp),
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            )
+                        }
+                    }
+                }
+
+                // Info text
+                if (!revealFact) {
                     Text(
                         text = "Mark as found to reveal the fun fact!",
                         fontSize = 14.sp,
@@ -250,10 +282,7 @@ fun HuntItemDetailModal(
                     }
                     if (!isFound) {
                         Button(
-                            onClick = {
-                                onMarkFound()
-                                showFact = true
-                            },
+                            onClick = onMarkFound,
                             modifier = Modifier.weight(1f)
                         ) {
                             Text("Mark Found")
