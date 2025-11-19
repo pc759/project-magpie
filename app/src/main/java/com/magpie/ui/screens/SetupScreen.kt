@@ -19,18 +19,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.ExperimentalMaterial3Api
-import com.magpie.R
 
 enum class Difficulty {
     TODDLER, EXPLORER, EXPERT
 }
 
-// Square numbers: 4, 9, 16, 25, 32
 val VALID_ITEM_COUNTS = listOf(4, 9, 16, 25, 32)
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +39,7 @@ fun SetupScreen(
 ) {
     var location by remember { mutableStateOf("") }
     var selectedDifficulty by remember { mutableStateOf(Difficulty.EXPLORER) }
-    var selectedItemCount by remember { mutableStateOf(9) } // Default to 3x3 grid
+    var selectedItemCount by remember { mutableStateOf(9) }
 
     Column(
         modifier = modifier
@@ -50,18 +47,16 @@ fun SetupScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // Header
         Text(
-            text = stringResource(R.string.setup_hunt),
+            text = "Setup Hunt",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
 
-        // Location Input
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
-                text = stringResource(R.string.location),
+                text = "Location",
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp
             )
@@ -74,10 +69,9 @@ fun SetupScreen(
             )
         }
 
-        // Difficulty Selector
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
-                text = stringResource(R.string.difficulty),
+                text = "Difficulty",
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp
             )
@@ -88,25 +82,24 @@ fun SetupScreen(
                 ElevatedFilterChip(
                     selected = selectedDifficulty == Difficulty.TODDLER,
                     onClick = { selectedDifficulty = Difficulty.TODDLER },
-                    label = { Text(stringResource(R.string.difficulty_toddler)) }
+                    label = { Text("Toddler") }
                 )
                 ElevatedFilterChip(
                     selected = selectedDifficulty == Difficulty.EXPLORER,
                     onClick = { selectedDifficulty = Difficulty.EXPLORER },
-                    label = { Text(stringResource(R.string.difficulty_explorer)) }
+                    label = { Text("Explorer") }
                 )
                 ElevatedFilterChip(
                     selected = selectedDifficulty == Difficulty.EXPERT,
                     onClick = { selectedDifficulty = Difficulty.EXPERT },
-                    label = { Text(stringResource(R.string.difficulty_expert)) }
+                    label = { Text("Expert") }
                 )
             }
         }
 
-        // Item Count Selector (Square Numbers Only)
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
-                text = stringResource(R.string.item_count),
+                text = "Item Count",
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp
             )
@@ -125,10 +118,8 @@ fun SetupScreen(
             }
         }
 
-        // Spacer to push buttons to bottom
         Spacer(modifier = Modifier.weight(1f))
 
-        // Action Buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -150,7 +141,7 @@ fun SetupScreen(
                     .padding(vertical = 12.dp),
                 enabled = location.isNotBlank()
             ) {
-                Text(stringResource(R.string.begin_hunt))
+                Text("Begin Hunt")
             }
         }
     }
