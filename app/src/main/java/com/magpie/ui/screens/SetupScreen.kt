@@ -1,6 +1,5 @@
 package com.magpie.ui.screens
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -20,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,9 +27,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -54,7 +54,7 @@ val VALID_ITEM_COUNTS = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetupScreen(
-    onBeginHunt: (location: String, difficulty: Difficulty, itemCount: Int) -> Unit,
+    onBeginHunt: (location: String, difficulty: Difficulty, itemCount: Int, huntId: Int) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -77,10 +77,14 @@ fun SetupScreen(
                 generationError = null
                 isGenerating = true
                 scope.launch {
-                    val result = huntGenerator.generateHuntForLocation(location, selectedItemCount)
+                    val result = huntGenerator.generateHuntForLocation(
+                        location,
+                        selectedItemCount,
+                        selectedDifficulty.name
+                    )
                     isGenerating = false
-                    if (result.success) {
-                        onBeginHunt(location, selectedDifficulty, selectedItemCount)
+                    if (result.success && result.huntId != null) {
+                        onBeginHunt(location, selectedDifficulty, selectedItemCount, result.huntId)
                     } else {
                         generationError = result.error ?: "Unknown error occurred"
                     }
@@ -183,10 +187,14 @@ fun SetupScreen(
                     onClick = {
                         isGenerating = true
                         scope.launch {
-                            val result = huntGenerator.generateHuntForLocation(location, selectedItemCount)
+                            val result = huntGenerator.generateHuntForLocation(
+                                location,
+                                selectedItemCount,
+                                selectedDifficulty.name
+                            )
                             isGenerating = false
-                            if (result.success) {
-                                onBeginHunt(location, selectedDifficulty, selectedItemCount)
+                            if (result.success && result.huntId != null) {
+                                onBeginHunt(location, selectedDifficulty, selectedItemCount, result.huntId)
                             } else {
                                 generationError = result.error ?: "Unknown error occurred"
                             }
@@ -225,7 +233,7 @@ fun LoadingScreen(location: String) {
     val infiniteTransition = rememberInfiniteTransition(label = "loading")
 
     // Cycle through messages every 2 seconds
-    androidx.compose.runtime.LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) {
         while (true) {
             kotlinx.coroutines.delay(2000)
             currentMessageIndex = (currentMessageIndex + 1) % loadingMessages.size
@@ -250,7 +258,7 @@ fun LoadingScreen(location: String) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "🪄",
+            text = "🦆",
             fontSize = 80.sp,
             modifier = Modifier.padding(bottom = 24.dp)
         )
@@ -328,7 +336,7 @@ fun ErrorScreen(
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
             modifier = Modifier.padding(bottom = 32.dp),
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            textAlign = TextAlign.Center
         )
 
         Row(

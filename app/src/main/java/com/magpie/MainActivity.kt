@@ -18,33 +18,31 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MagpieTheme {
-                var currentScreen by remember { mutableStateOf<Screen>(Screen.MainMenu) }
+                var currentScreen by remember { mutableStateOf("menu") }
                 var huntParams by remember { mutableStateOf<HuntParams?>(null) }
 
                 when (currentScreen) {
-                    Screen.MainMenu -> {
-                        MainMenuScreen(
-                            onStartNewHunt = { currentScreen = Screen.Setup }
+                    "menu" -> MainMenuScreen(
+                        onStartNewHunt = { currentScreen = "setup" }
+                    )
+                    "setup" -> SetupScreen(
+                        onBeginHunt = { location, difficulty, itemCount, huntId ->
+                            huntParams = HuntParams(location, difficulty, itemCount, huntId)
+                            currentScreen = "hunt"
+                        },
+                        onBack = { currentScreen = "menu" }
+                    )
+                    "hunt" -> huntParams?.let { params ->
+                        HuntScreen(
+                            location = params.location,
+                            difficulty = params.difficulty,
+                            itemCount = params.itemCount,
+                            huntId = params.huntId,
+                            onBack = {
+                                currentScreen = "menu"
+                                huntParams = null
+                            }
                         )
-                    }
-                    Screen.Setup -> {
-                        SetupScreen(
-                            onBeginHunt = { location, difficulty, itemCount ->
-                                huntParams = HuntParams(location, difficulty, itemCount)
-                                currentScreen = Screen.Hunt
-                            },
-                            onBack = { currentScreen = Screen.MainMenu }
-                        )
-                    }
-                    Screen.Hunt -> {
-                        huntParams?.let { params ->
-                            HuntScreen(
-                                location = params.location,
-                                difficulty = params.difficulty,
-                                itemCount = params.itemCount,
-                                onBack = { currentScreen = Screen.MainMenu }
-                            )
-                        }
                     }
                 }
             }
@@ -52,14 +50,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-sealed class Screen {
-    object MainMenu : Screen()
-    object Setup : Screen()
-    object Hunt : Screen()
-}
-
 data class HuntParams(
     val location: String,
     val difficulty: Difficulty,
-    val itemCount: Int
+    val itemCount: Int,
+    val huntId: Int
 )

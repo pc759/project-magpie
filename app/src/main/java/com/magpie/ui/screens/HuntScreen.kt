@@ -56,18 +56,25 @@ fun HuntScreen(
     location: String,
     difficulty: Difficulty,
     itemCount: Int,
+    huntId: Int,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val repository = remember { HuntRepository(context) }
-    val hunt = remember { repository.getHuntByDifficulty(difficulty) }
-    val huntItems = hunt.items.take(itemCount)
-
+    var huntItems by remember { mutableStateOf<List<HuntItem>>(emptyList()) }
     var selectedItems by remember { mutableStateOf(setOf<Int>()) }
     var selectedItem by remember { mutableStateOf<HuntItem?>(null) }
     var showReportMenu by remember { mutableStateOf(false) }
     
+    // Load hunt from database
+    LaunchedEffect(huntId) {
+        val generatedHunt = repository.getHuntById(huntId)
+        if (generatedHunt != null) {
+            huntItems = generatedHunt.items.toHuntItemList()
+        }
+    }
+
     val isComplete = selectedItems.size == huntItems.size
     val gridSize = sqrt(itemCount.toDouble()).toInt()
 
@@ -91,7 +98,7 @@ fun HuntScreen(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = hunt.name,
+                    text = "Hunt #$huntId",
                     fontSize = 13.sp,
                     color = Color.Gray
                 )
@@ -108,18 +115,20 @@ fun HuntScreen(
             }
         }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(gridSize),
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(huntItems) { item ->
-                HuntItemCard(
-                    item = item,
-                    isFound = item.id in selectedItems,
-                    onClick = { selectedItem = item }
-                )
+        if (huntItems.isNotEmpty()) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(gridSize),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(huntItems) { item ->
+                    HuntItemCard(
+                        item = item,
+                        isFound = item.id in selectedItems,
+                        onClick = { selectedItem = item }
+                    )
+                }
             }
         }
 
@@ -131,7 +140,7 @@ fun HuntScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "${hunt.id} • ${difficulty.name} • ${selectedItems.size}/${huntItems.size} found",
+                text = "${selectedItems.size}/${huntItems.size} found",
                 fontSize = 11.sp,
                 color = Color.Gray,
                 modifier = Modifier.fillMaxWidth(),
@@ -148,7 +157,7 @@ fun HuntScreen(
 
     // Completion banner
     AnimatedVisibility(
-        visible = isComplete,
+        visible = isComplete && huntItems.isNotEmpty(),
         enter = scaleIn(animationSpec = tween(500)) + fadeIn(animationSpec = tween(500)),
         exit = fadeOut(animationSpec = tween(300))
     ) {
@@ -182,7 +191,7 @@ fun HuntScreen(
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = "You found all $itemCount items in ${hunt.name}",
+                        text = "You found all $itemCount items in $location",
                         fontSize = 14.sp,
                         color = Color.Gray,
                         textAlign = TextAlign.Center

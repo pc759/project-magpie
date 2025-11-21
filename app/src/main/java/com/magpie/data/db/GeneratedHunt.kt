@@ -3,6 +3,8 @@ package com.magpie.data.db
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.magpie.data.HuntItem
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -29,27 +31,16 @@ data class HuntItemData(
     val isFound: Boolean = false
 )
 
-// Extension to convert HuntItem list to JSON string
+// Extension to convert HuntItem list to JSON string using Gson
 fun List<HuntItem>.toJsonString(): String {
-    return this.joinToString(",") { item ->
-        """{"id":${item.id},"name":"${item.name.replace("\"", "\\\"")}","imageUrl":"${item.imageUrl.replace("\"", "\\\"")}","funFact":"${item.funFact.replace("\"", "\\\"")}","isFound":${item.isFound}}"""
-    }.let { "[$it]" }
+    return Gson().toJson(this)
 }
 
-// Extension to parse JSON string back to HuntItem list
+// Extension to parse JSON string back to HuntItem list using Gson
 fun String.toHuntItemList(): List<HuntItem> {
     return try {
-        val itemRegex = "\"id\":(\\d+),\"name\":\"([^\"]*)\",\"imageUrl\":\"([^\"]*)\",\"funFact\":\"([^\"]*)\",\"isFound\":(true|false)".toRegex()
-        val matches = itemRegex.findAll(this)
-        matches.map { match ->
-            HuntItem(
-                id = match.groupValues[1].toInt(),
-                name = match.groupValues[2],
-                imageUrl = match.groupValues[3],
-                funFact = match.groupValues[4],
-                isFound = match.groupValues[5].toBoolean()
-            )
-        }.toList()
+        val type = object : TypeToken<List<HuntItem>>() {}.type
+        Gson().fromJson(this, type) ?: emptyList()
     } catch (e: Exception) {
         emptyList()
     }
