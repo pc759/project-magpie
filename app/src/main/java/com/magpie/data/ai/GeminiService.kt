@@ -48,6 +48,14 @@ class GeminiService(context: Context, private val apiKey: String) {
             // Parse response into items
             val items = parseHuntItems(responseText)
 
+            if (items.isEmpty()) {
+                return@withContext GeneratedHunt(
+                    items = emptyList(),
+                    isSafe = false,
+                    flaggedContent = "Could not parse hunt items from response"
+                )
+            }
+
             // Validate content
             val validationResult = safetyValidator.validateItems(
                 items.map { "${it.name} - ${it.funFact}" }
