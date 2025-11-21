@@ -7,13 +7,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [AIContentLog::class],
+    entities = [AIContentLog::class, GeneratedHunt::class],
     version = 1,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun aiContentLogDao(): AIContentLogDao
+    abstract fun generatedHuntDao(): GeneratedHuntDao
 
     companion object {
         @Volatile

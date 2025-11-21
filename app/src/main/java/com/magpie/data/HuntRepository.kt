@@ -1,60 +1,94 @@
 package com.magpie.data
 
 import android.content.Context
-import com.magpie.ui.screens.Difficulty
-import org.json.JSONArray
-import org.json.JSONObject
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import com.google.gson.Gson
+import com.magpie.data.db.AppDatabase
+import com.magpie.data.db.GeneratedHunt
+import com.magpie.data.db.toHuntItemList
+import com.magpie.data.db.toJsonString
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 
 data class Hunt(
     val id: String,
     val name: String,
     val location: String,
-    val difficulty: Difficulty,
     val items: List<HuntItem>
 )
 
+data class HuntItem(
+    val id: Int,
+    val name: String,
+    val imageUrl: String,
+    val funFact: String,
+    val isFound: Boolean = false
+)
+
 class HuntRepository(private val context: Context) {
-    fun getHuntByDifficulty(difficulty: Difficulty): Hunt {
-        val resourceId = when (difficulty) {
-            Difficulty.TODDLER -> com.magpie.R.raw.hunt_toddler
-            Difficulty.EXPLORER -> com.magpie.R.raw.hunt_explorer
-            Difficulty.EXPERT -> com.magpie.R.raw.hunt_expert
+    private val database = AppDatabase.getDatabase(context)
+    private val gson = Gson()
+
+    fun getHuntByDifficulty(difficulty: com.magpie.ui.screens.Difficulty): Hunt {
+        val resourceName = when (difficulty) {
+            com.magpie.ui.screens.Difficulty.TODDLER -> "hunt_toddler"
+            com.magpie.ui.screens.Difficulty.EXPLORER -> "hunt_explorer"
+            com.magpie.ui.screens.Difficulty.EXPERT -> "hunt_expert"
         }
 
-        val inputStream = context.resources.openRawResource(resourceId)
+        val inputStream = context.resources.openRawResource(
+            context.resources.getIdentifier(resourceName, "raw", context.packageName)
+        )
         val json = inputStream.bufferedReader().use { it.readText() }
-        val jsonObject = JSONObject(json)
-
-        return parseHunt(jsonObject)
+        return gson.fromJson(json, Hunt::class.java)
     }
 
-    private fun parseHunt(jsonObject: JSONObject): Hunt {
-        val id = jsonObject.getString("id")
-        val name = jsonObject.getString("name")
-        val location = jsonObject.getString("location")
-        val difficulty = Difficulty.valueOf(jsonObject.getString("difficulty"))
-        val itemsArray = jsonObject.getJSONArray("items")
-
-        val items = mutableListOf<HuntItem>()
-        for (i in 0 until itemsArray.length()) {
-            val itemJson = itemsArray.getJSONObject(i)
-            items.add(
-                HuntItem(
-                    id = itemJson.getInt("id"),
-                    name = itemJson.getString("name"),
-                    imageUrl = itemJson.getString("imageUrl"),
-                    funFact = itemJson.getString("funFact"),
-                    isFound = false
-                )
-            )
-        }
-
-        return Hunt(
-            id = id,
-            name = name,
+    suspend fun saveGeneratedHunt(
+        location: String,
+        difficulty: String,
+        items: List<HuntItem>
+    ): Long = withContext(Dispatchers.IO) {
+        val hunt = GeneratedHunt(
             location = location,
             difficulty = difficulty,
-            items = items
+            itemCount = items.size,
+            items = items.toJsonString()
         )
+        database.generatedHuntDao().insertHunt(hunt)
+    }
+
+    suspend fun updateHuntProgress(
+        huntId: Int,
+        items: List<HuntItem>
+    ) = withContext(Dispatchers.IO) {
+        val hunt = database.generatedHuntDao().getHuntById(huntId)
+        if (hunt != null) {
+            val isComplete = items.all { it.isFound }
+            val updatedHunt = hunt.copy(
+                items = items.toJsonString(),
+                isComplete = isComplete,
+                lastPlayedAt = LocalDateTime.now(),
+                completedAt = if (isComplete) LocalDateTime.now() else hunt.completedAt
+            )
+            database.generatedHuntDao().updateHunt(updatedHunt)
+        }
+    }
+
+    suspend fun getLatestIncompleteHunt(): GeneratedHunt? = withContext(Dispatchers.IO) {
+        database.generatedHuntDao().getLatestIncompleteHunt()
+    }
+
+    suspend fun getHuntById(id: Int): GeneratedHunt? = withContext(Dispatchers.IO) {
+        database.generatedHuntDao().getHuntById(id)
+    }
+
+    suspend fun getAllHunts(): List<GeneratedHunt> = withContext(Dispatchers.IO) {
+        database.generatedHuntDao().getAllHunts()
+    }
+
+    suspend fun deleteHunt(id: Int) = withContext(Dispatchers.IO) {
+        database.generatedHuntDao().deleteHunt(id)
     }
 }

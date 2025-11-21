@@ -16,7 +16,8 @@ class HuntGenerator(context: Context, apiKey: String) {
 
     suspend fun generateHuntForLocation(
         location: String,
-        itemCount: Int = 9
+        itemCount: Int = 9,
+        difficulty: String = "EXPLORER"
     ): GenerationResult = withContext(Dispatchers.IO) {
         try {
             // Call Gemini to generate items
@@ -26,6 +27,7 @@ class HuntGenerator(context: Context, apiKey: String) {
             if (!generatedHunt.isSafe) {
                 return@withContext GenerationResult(
                     success = false,
+                    huntId = null,
                     items = emptyList(),
                     error = "Content failed safety validation: ${generatedHunt.flaggedContent}",
                     requiresReview = true
@@ -43,8 +45,16 @@ class HuntGenerator(context: Context, apiKey: String) {
                 )
             }
 
+            // Save to database
+            val huntId = huntRepository.saveGeneratedHunt(
+                location = location,
+                difficulty = difficulty,
+                items = huntItems
+            ).toInt()
+
             GenerationResult(
                 success = true,
+                huntId = huntId,
                 items = huntItems,
                 error = null,
                 requiresReview = false
@@ -52,6 +62,7 @@ class HuntGenerator(context: Context, apiKey: String) {
         } catch (e: Exception) {
             GenerationResult(
                 success = false,
+                huntId = null,
                 items = emptyList(),
                 error = "Generation failed: ${e.message}",
                 requiresReview = false
@@ -61,6 +72,7 @@ class HuntGenerator(context: Context, apiKey: String) {
 
     data class GenerationResult(
         val success: Boolean,
+        val huntId: Int?,
         val items: List<HuntItem>,
         val error: String? = null,
         val requiresReview: Boolean = false
