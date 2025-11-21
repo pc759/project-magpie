@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.magpie.data.HuntItem
 import com.magpie.data.HuntRepository
+import kotlin.math.sqrt
 
 @Composable
 fun HuntScreen(
@@ -63,6 +64,7 @@ fun HuntScreen(
     var selectedItem by remember { mutableStateOf<HuntItem?>(null) }
     
     val isComplete = selectedItems.size == huntItems.size
+    val gridSize = sqrt(itemCount.toDouble()).toInt()
 
     Column(
         modifier = modifier
@@ -73,18 +75,18 @@ fun HuntScreen(
         // Header with location
         Column {
             Text(
-                text = hunt.location,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                text = location,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
             )
             Text(
                 text = hunt.name,
-                fontSize = 12.sp,
+                fontSize = 13.sp,
                 color = Color.Gray
             )
         }
 
-        val gridSize = kotlin.math.sqrt(itemCount.toDouble()).toInt()
         LazyVerticalGrid(
             columns = GridCells.Fixed(gridSize),
             modifier = Modifier.fillMaxWidth(),
@@ -200,7 +202,7 @@ fun HuntItemCard(
         modifier = modifier
             .aspectRatio(1f)
             .clickable(onClick = onClick)
-            .border(1.dp, Color.Gray.copy(alpha = 0.3f))
+            .border(2.dp, Color.Gray.copy(alpha = 0.3f))
     ) {
         Box(
             modifier = Modifier

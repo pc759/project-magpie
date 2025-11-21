@@ -28,7 +28,15 @@ enum class Difficulty {
     TODDLER, EXPLORER, EXPERT
 }
 
-val VALID_ITEM_COUNTS = listOf(4, 9, 16, 25, 32)
+data class ItemCountOption(val count: Int, val gridSize: Int, val label: String)
+
+val VALID_ITEM_COUNTS = listOf(
+    ItemCountOption(4, 2, "2×2"),
+    ItemCountOption(9, 3, "3×3"),
+    ItemCountOption(16, 4, "4×4"),
+    ItemCountOption(25, 5, "5×5"),
+    ItemCountOption(32, 6, "6×6")
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,12 +115,11 @@ fun SetupScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                VALID_ITEM_COUNTS.forEach { count ->
-                    val gridSize = kotlin.math.sqrt(count.toDouble()).toInt()
+                VALID_ITEM_COUNTS.forEach { option ->
                     ElevatedFilterChip(
-                        selected = selectedItemCount == count,
-                        onClick = { selectedItemCount = count },
-                        label = { Text("$gridSize×$gridSize") }
+                        selected = selectedItemCount == option.count,
+                        onClick = { selectedItemCount = option.count },
+                        label = { Text(option.label) }
                     )
                 }
             }
