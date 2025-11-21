@@ -22,8 +22,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,6 +66,7 @@ fun HuntScreen(
 
     var selectedItems by remember { mutableStateOf(setOf<Int>()) }
     var selectedItem by remember { mutableStateOf<HuntItem?>(null) }
+    var showReportMenu by remember { mutableStateOf(false) }
     
     val isComplete = selectedItems.size == huntItems.size
     val gridSize = sqrt(itemCount.toDouble()).toInt()
@@ -72,19 +77,35 @@ fun HuntScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header with location
-        Column {
-            Text(
-                text = location,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                text = hunt.name,
-                fontSize = 13.sp,
-                color = Color.Gray
-            )
+        // Header with location and report button
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = location,
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = hunt.name,
+                    fontSize = 13.sp,
+                    color = Color.Gray
+                )
+            }
+            IconButton(
+                onClick = { showReportMenu = !showReportMenu },
+                modifier = Modifier.padding(start = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Flag,
+                    contentDescription = "Report unsafe content",
+                    tint = Color.Red.copy(alpha = 0.6f)
+                )
+            }
         }
 
         LazyVerticalGrid(

@@ -1,0 +1,51 @@
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Android Studio generated files
+.idea/
+*.iml
+*.apk
+*.ap_
+*.dex
+*.class
+.DS_Store
+/bin
+/gen
+/out
+*.log
+*.swp
+*~.nib
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/
+*.code-workspace
+
+# Android Studio
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.LSOverride
+*.jks
+*.keystore
+
+# Kotlin/Java
+*.kt.bak
+*.java.bak
+
+# Misc
+*.swp
+*~
+.DS_Store
