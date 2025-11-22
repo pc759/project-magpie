@@ -1,8 +1,6 @@
 package com.magpie.data
 
 import android.content.Context
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import com.google.gson.Gson
 import com.magpie.data.db.AppDatabase
 import com.magpie.data.db.GeneratedHunt
@@ -91,4 +89,3 @@ class HuntRepository(private val context: Context) {
     suspend fun deleteHunt(id: Int) = withContext(Dispatchers.IO) {
         database.generatedHuntDao().deleteHunt(id)
     }
-}

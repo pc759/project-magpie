@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.magpie.data.HuntItem
 import com.magpie.data.HuntRepository
+import com.magpie.data.db.toHuntItemList
 import kotlin.math.sqrt
 
 @Composable
