@@ -70,7 +70,7 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
     
     // Gemini API
-    implementation("com.google.ai.client.generativeai:google-generative-ai-kotlin:0.1.2")
+    implementation("com.google.ai.client.generativeai:google-generative-ai-kotlin:0.7.0")
     
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
